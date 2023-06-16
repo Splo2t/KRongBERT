@@ -34,7 +34,6 @@ from transformers.utils import (
     is_torch_available,
     logging,
     to_py_obj,
-    torch_required,
 )
 
 from transformers.tokenization_utils_base import BatchEncoding
@@ -81,76 +80,6 @@ class MyWordpieceTokenizer(object):
         self.kiwi = Kiwi(num_workers=1, model_path=None, load_default_dict=True, integrate_allomorph=True, model_type='sbg', typos=None, typo_cost_threshold=2.5)
 
 
-    def convert(self,test_keyword):
-        BASE_CODE, CHOSUNG, JUNGSUNG = 44032, 588, 28
-
-        # 초성 리스트. 00 ~ 18
-        CHOSUNG_LIST = ['ㄱ', 'ㄲ', 'ㄴ', 'ㄷ', 'ㄸ', 'ㄹ', 'ㅁ', 'ㅂ', 'ㅃ', 'ㅅ', 'ㅆ', 'ㅇ', 'ㅈ', 'ㅉ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ']
-
-        # 중성 리스트. 00 ~ 20
-        JUNGSUNG_LIST = ['ㅏ', 'ㅐ', 'ㅑ', 'ㅒ', 'ㅓ', 'ㅔ', 'ㅕ', 'ㅖ', 'ㅗ', 'ㅘ', 'ㅙ', 'ㅚ', 'ㅛ', 'ㅜ', 'ㅝ', 'ㅞ', 'ㅟ', 'ㅠ', 'ㅡ', 'ㅢ', 'ㅣ']
-
-        # 종성 리스트. 00 ~ 27 + 1(1개 없음)
-        JONGSUNG_LIST = [' ', 'ㄱ', 'ㄲ', 'ㄳ', 'ㄴ', 'ㄵ', 'ㄶ', 'ㄷ', 'ㄹ', 'ㄺ', 'ㄻ', 'ㄼ', 'ㄽ', 'ㄾ', 'ㄿ', 'ㅀ', 'ㅁ', 'ㅂ', 'ㅄ', 'ㅅ', 'ㅆ', 'ㅇ', 'ㅈ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ']
-        JONGSUNG_LIST = [' ', 0x11A8, 0x11A9, 0x11AA, 0x11AB, 0x11AC, 0x11AD, 0x11AE, 0x11AF, 0x11B0, 0x11B1, 0x11B2, 0x11B3, 0x11B4, 0x11B5, 0x11B6, 0x11B7, 0x11B8, 0x11B9, 0x11BA, 0x11BB, 0x11BC, 0x11BD, 0x11BE, 0x11BF, 0x11C0, 0x11C1, 0x11C2]
-
-        split_keyword_list = list(test_keyword)
-        #print(split_keyword_list)
-
-        result = list()
-        for keyword in split_keyword_list:
-            # 한글 여부 check 후 분리
-            if re.match('.*[ㄱ-ㅎㅏ-ㅣ가-힣]+.*', keyword) is not None:
-                char_code = ord(keyword) - BASE_CODE
-                char1 = int(char_code / CHOSUNG)
-                """
-                if char1 >= len(CHOSUNG_LIST):
-                    print(char1, " ", ord(keyword))
-                """
-                try:
-                    result.append(CHOSUNG_LIST[char1])
-                except:
-                    #print(char1," ", CHOSUNG_LIST[-1], " ", keyword)
-                    #print(test_keyword)
-                    result.append(keyword)
-                    continue
-                #print('초성 : {}'.format(CHOSUNG_LIST[char1]))
-                char2 = int((char_code - (CHOSUNG * char1)) / JUNGSUNG)
-                result.append(JUNGSUNG_LIST[char2])
-                #print('중성 : {}'.format(JUNGSUNG_LIST[char2]))
-                char3 = int((char_code - (CHOSUNG * char1) - (JUNGSUNG * char2)))
-                if char3==0:
-                    result.append('⑨')
-                else:
-                    result.append(chr(JONGSUNG_LIST[char3]))
-                #print('종성 : {}'.format(JONGSUNG_LIST[char3]))
-            else:
-                result.append(keyword)
-        # result
-        #print("".join(result))
-        return("".join(result))
-    def tokens(self, sentence):
-        new_sentence = whitespace_tokenize(sentence)
-        return_list = []
-        for tokens in new_sentence:
-            morph_tokens = self.kiwi.tokenize(tokens)
-            #print(morph_tokens)
-            if len(morph_tokens) < 0:
-                continue
-            elif len(morph_tokens) == 1:
-                return_list.append(morph_tokens[0].form)
-                return_list.append(" ")
-            elif len(morph_tokens) == 2:
-                return_list.append(morph_tokens[0].form)
-                return_list.append(morph_tokens[1].form)
-                return_list.append(" ")
-            elif len(morph_tokens) >= 3:
-                return_list.append(morph_tokens[0].form)
-                for i in range(1,len(morph_tokens)-1):
-                    return_list.append(morph_tokens[i].form)
-                return_list.append(morph_tokens[-1].form)
-                return_list.append(" ")
-        return ''.join(return_list)
     def tokenize(self, text):
         """
         Tokenizes a piece of text into its word pieces. This uses a greedy longest-match-first algorithm to perform
