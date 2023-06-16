@@ -20,15 +20,16 @@ The bidirectional encoder representations from transformers (BERT) model has ach
 | KRongBERT         | 30GB | 90.22 | 86.79 | 80.92  | 84.6   |
 
 ### Requirements
-Transformers == 4.29.2
-(Replace the bert folder in models inside the installed transformers with the bert folder in the transformers folder)
-accelerate==0.20.3
-torch==2.0.1
-attrdict==2.0.1
-cupy==12.1.0
-datasets==2.12.0
-deepspeed==0.9.2
-fastprogress==1.0.3
-kiwipiepy==0.15.1
-scikit-learn==1.2.2
-scipy==1.10.1
+Transformers == 4.29.2  
+(Replace the bert folder in models inside the installed transformers with the bert folder in the transformers folder)  
+accelerate==0.20.3  
+torch==2.0.1  
+attrdict==2.0.1  
+cupy==12.1.0  
+datasets==2.12.0  
+deepspeed==0.9.2  
+fastprogress==1.0.3  
+kiwipiepy==0.15.1  
+scikit-learn==1.2.2  
+scipy==1.10.1  
+  
