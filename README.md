@@ -17,7 +17,8 @@ The bidirectional encoder representations from transformers (BERT) model has ach
 | KcBERT-base       | 15GB | 89.62 | 84.34 | 74.85  | 75.57  |
 | KoreALBERT-base   | 43GB | 89.6  | 82.3  | 79.7   | 81.2   |
 | KoreALBERT-Large  | 43GB | 89.7  | 83.7  | 81.1   | 82.1   |
-| KRongBERT         | 30GB | 90.22 | 86.79 | 80.92  | 84.6   |
+| KRongBERT         |  8GB | 90.17 | 86.81 | 80.01  | 84.10  |
+
 
 ### Requirements
 Transformers == 4.29.2  
